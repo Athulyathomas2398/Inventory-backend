@@ -4,14 +4,13 @@ const Item = require('../model/Item');
 // Add a new GoodsOut entry (i.e., remove stock)
 exports.addGoodsOut = async (req, res) => {
   try {
-    const { item, quantity, dateRemoved } = req.body;
+    const {item, itemName, quantity } = req.body;
 
-    if (!item || !quantity || !dateRemoved) {
+    if (!itemName || !quantity) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    
-    const existingItem = await Item.findById(item);
+    const existingItem = await Item.findOne({ itemName });
     if (!existingItem) {
       return res.status(404).json({ message: 'Item not found' });
     }
@@ -23,9 +22,9 @@ exports.addGoodsOut = async (req, res) => {
 
     
     const goodsOutEntry = await GoodsOut.create({
-      item,
-      quantity,
-      dateRemoved
+      item: existingItem._id,
+      itemName,
+      quantity
     });
 
     
